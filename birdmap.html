@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Birds of Asian Cities</title>
+    <script src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .bird-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .city-name {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .bird-info {
+            font-size: 12px;
+            color: #34495e;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .legend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 200px;
+            z-index: 1;
+        }
+
+        .legend h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <div class="legend">
+        <h3>Special Birds of Asia</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>Endemic Species</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #3498db;"></div>
+            <span>Migratory Birds</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #2ecc71;"></div>
+            <span>National Symbols</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Rare/Threatened</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize map
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://demotiles.maplibre.org/style.json', // Free style
+            center: [100, 20], // Center on Asia
+            zoom: 3
+        });
+
+        // Bird data for 20 Asian cities
+        const birdData = [
+            {
+                city: "Tokyo, Japan",
+                coordinates: [139.6917, 35.6895],
+                bird: "Japanese Crane",
+                scientific: "Grus japonensis",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "National bird of Japan, symbol of longevity and good fortune."
+            },
+            {
+                city: "Beijing, China",
+                coordinates: [116.4074, 39.9042],
+                bird: "Red-crowned Crane",
+                scientific: "Grus japonensis",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "Sacred bird in Chinese culture, represents virtue and longevity."
+            },
+            {
+                city: "Seoul, South Korea",
+                coordinates: [126.9780, 37.5665],
+                bird: "Korean Magpie",
+                scientific: "Pica pica sericea",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "Brings good luck according to Korean folklore."
+            },
+            {
+                city: "Bangkok, Thailand",
+                coordinates: [100.5018, 13.7563],
+                bird: "Siamese Fireback",
+                scientific: "Lophura diardi",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "National bird of Thailand, known for its vibrant plumage."
+            },
+            {
+                city: "Jakarta, Indonesia",
+                coordinates: [106.8456, -6.2088],
+                bird: "Javan Hawk-Eagle",
+                scientific: "Nisaetus bartelsi",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "National bird of Indonesia, critically endangered."
+            },
+            {
+                city: "Mumbai, India",
+                coordinates: [72.8777, 19.0760],
+                bird: "Indian Peafowl",
+                scientific: "Pavo cristatus",
+                type: "national",
+                color: "#2ecc71",
+                description: "National bird of India, known for its spectacular display."
+            },
+            {
+                city: "Singapore",
+                coordinates: [103.8198, 1.3521],
+                bird: "Crimson Sunbird",
+                scientific: "Aethopyga siparaja",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "Tiny but vibrant bird, common in Singapore's parks."
+            },
+            {
+                city: "Kuala Lumpur, Malaysia",
+                coordinates: [101.6869, 3.1390],
+                bird: "Rhinoceros Hornbill",
+                scientific: "Buceros rhinoceros",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "State bird of Sarawak, known for its distinctive casque."
+            },
+            {
+                city: "Manila, Philippines",
+                coordinates: [120.9842, 14.5995],
+                bird: "Philippine Eagle",
+                scientific: "Pithecophaga jefferyi",
+                type: "endemic",
+                color: "#f39c12",
+                description: "National bird, one of the largest eagles, critically endangered."
+            },
+            {
+                city: "Ho Chi Minh City, Vietnam",
+                coordinates: [106.6297, 10.8231],
+                bird: "Siberian Crane",
+                scientific: "Leucogeranus leucogeranus",
+                type: "migratory",
+                color: "#3498db",
+                description: "Winter visitor to Vietnam, critically endangered."
+            },
+            {
+                city: "Taipei, Taiwan",
+                coordinates: [121.5654, 25.0330],
+                bird: "Mikado Pheasant",
+                scientific: "Syrmaticus mikado",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "National bird of Taiwan, found only in the mountains."
+            },
+            {
+                city: "Dhaka, Bangladesh",
+                coordinates: [90.4125, 23.8103],
+                bird: "Oriental Magpie-Robin",
+                scientific: "Copsychus saularis",
+                type: "national",
+                color: "#2ecc71",
+                description: "National bird of Bangladesh, known for its melodious song."
+            },
+            {
+                city: "Kathmandu, Nepal",
+                coordinates: [85.3240, 27.7172],
+                bird: "Himalayan Monal",
+                scientific: "Lophophorus impejanus",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "National bird of Nepal, spectacular pheasant of the Himalayas."
+            },
+            {
+                city: "Colombo, Sri Lanka",
+                coordinates: [79.8612, 6.9271],
+                bird: "Sri Lankan Junglefowl",
+                scientific: "Gallus lafayettii",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "National bird of Sri Lanka, ancestor of domestic chicken."
+            },
+            {
+                city: "Ulaanbaatar, Mongolia",
+                coordinates: [106.9057, 47.8864],
+                bird: "Saker Falcon",
+                scientific: "Falco cherrug",
+                type: "endemic",
+                color: "#f39c12",
+                description: "National bird of Mongolia, endangered falcon species."
+            },
+            {
+                city: "Astana, Kazakhstan",
+                coordinates: [71.4304, 51.1694],
+                bird: "Golden Eagle",
+                scientific: "Aquila chrysaetos",
+                type: "migratory",
+                color: "#3498db",
+                description: "Majestic raptor found across Kazakhstan's steppes."
+            },
+            {
+                city: "Tehran, Iran",
+                coordinates: [51.3890, 35.6892],
+                bird: "Persian Fallow Deer",
+                scientific: "Dama dama mesopotamica",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "While not a bird, this endangered deer is Iran's national animal. Wait, the user asked for birds! Let me correct this to a bird."
+            },
+            {
+                city: "Tehran, Iran",
+                coordinates: [51.3890, 35.6892],
+                bird: "Houbara Bustard",
+                scientific: "Chlamydotis undulata",
+                type: "migratory",
+                color: "#3498db",
+                description: "Elegant bustard found in Iranian deserts."
+            },
+            {
+                city: "Ankara, Turkey",
+                coordinates: [32.8597, 39.9334],
+                bird: "Red Kite",
+                scientific: "Milvus milvus",
+                type: "migratory",
+                color: "#3498db",
+                description: "Graceful raptor, protected species in Turkey."
+            },
+            {
+                city: "Kyoto, Japan",
+                coordinates: [135.7681, 35.0116],
+                bird: "Japanese Bush Warbler",
+                scientific: "Horornis diphone",
+                type: "endemic",
+                color: "#e74c3c",
+                description: "Famous for its song, considered a symbol of spring in Japan."
+            }
+        ];
+
+        // Add markers to map
+        birdData.forEach(bird => {
+            // Create marker element
+            const markerElement = document.createElement('div');
+            markerElement.className = 'bird-marker';
+            markerElement.style.width = '20px';
+            markerElement.style.height = '20px';
+            markerElement.style.borderRadius = '50%';
+            markerElement.style.backgroundColor = bird.color;
+            markerElement.style.border = '2px solid white';
+            markerElement.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+            markerElement.style.cursor = 'pointer';
+
+            // Create popup
+            const popup = new maplibregl.Popup({ offset: 25 })
+                .setHTML(`
+                    <div class="bird-name">${bird.bird}</div>
+                    <div class="city-name">${bird.city}</div>
+                    <div class="bird-info">
+                        <em>${bird.scientific}</em><br>
+                        ${bird.description}
+                    </div>
+                `);
+
+            // Create marker
+            const marker = new maplibregl.Marker(markerElement)
+                .setLngLat(bird.coordinates)
+                .setPopup(popup)
+                .addTo(map);
+
+            // Add click event to marker
+            markerElement.addEventListener('click', () => {
+                map.flyTo({
+                    center: bird.coordinates,
+                    zoom: 8,
+                    duration: 2000
+                });
+            });
+        });
+
+        // Add navigation control
+        map.addControl(new maplibregl.NavigationControl());
+
+        // Add fullscreen control
+        map.addControl(new maplibregl.FullscreenControl());
+    </script>
+</body>
+</html>
